@@ -1,7 +1,7 @@
 buildscript {
     repositories {
-        maven { url "http://maven.oschina.net/content/groups/public/" }
         mavenLocal()
+        maven { url "http://maven.oschina.net/content/groups/public/" }
         maven { url 'https://github.com/steffenschaefer/gwt-gradle-plugin/raw/maven-repo/' }
     }
     dependencies {

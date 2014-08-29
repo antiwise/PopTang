@@ -1,16 +1,5 @@
 apply plugin: "java"
 
-buildscript {
-
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'org.apache.httpcomponents:httpclient:3.1'
-    }
-}
-
 sourceCompatibility = 1.6
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -21,3 +10,15 @@ eclipse.project {
     name = appName + "-core"
 }
 
+// 设置 maven 库地址
+repositories {  
+    //mavenCentral() // 中央库
+    mavenLocal();//本地缓存库
+    // maven { url 'http://maven.oschina.net/content/groups/public/' } // 自定义库地址
+}
+
+
+// 设置依赖
+dependencies {
+	compile 'org.pomo:Fast-Libgdx:0.0.1'
+}
