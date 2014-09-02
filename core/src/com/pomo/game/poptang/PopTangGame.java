@@ -7,8 +7,6 @@ import org.pomo.fast.game.libgdx.constant.enums.TYPE_GAME_STATE;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.pomo.game.poptang.stages.LaunchStage;
 
@@ -24,15 +22,16 @@ public class PopTangGame extends ApplicationAdapter {
 	 */
 	LinkedList<Stage> stages;
 	
+	/**
+	 * 当前舞台
+	 */
+	Stage stage;
+	
 	int width,height;
 	
-	SpriteBatch batch;
-	Texture img;
 	
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
 		
 		STATE = TYPE_GAME_STATE.LOAD;
 		stages = new LinkedList<Stage>();
@@ -40,21 +39,20 @@ public class PopTangGame extends ApplicationAdapter {
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
 		
-		stages.add(new LaunchStage(this));
+		//添加一个舞台
+		this.stage = new LaunchStage(this);
+		addStage(this.stage);
 	}
 
 	@Override
 	public void render () {
+		
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
 		
 		
-		
-		stages.getLast().act();
-		stages.getLast().draw();
+		this.stage.act();
+		this.stage.draw();
 	}
 
 	public float getWidth() {
@@ -65,4 +63,13 @@ public class PopTangGame extends ApplicationAdapter {
 		return height;
 	}
 	
+	public void addStage(Stage stage) {
+		this.stages.add(stage);
+	}
+	
+	public void removeStage(){
+		this.stages.remove().dispose();
+		this.stage = this.stages.getFirst();
+		Gdx.input.setInputProcessor(this.stage);
+	}
 }
