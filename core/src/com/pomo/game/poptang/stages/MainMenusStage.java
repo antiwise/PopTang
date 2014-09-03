@@ -35,6 +35,7 @@ public class MainMenusStage extends Stage{
 		//初始化音乐
 		bg = Gdx.audio.newMusic(Gdx.files.internal("music/bg/music-1.ogg"));
 		bg.setLooping(true);
+		bg.play();
 		
 		//初始化背景
 		Image bg = new Image(new Texture("image/bg/menu.jpg"));
@@ -75,5 +76,10 @@ public class MainMenusStage extends Stage{
 		return btn;
 	}
 	
-	
+	@Override
+	public void dispose() {
+		super.dispose();
+		bg.stop();
+		bg.dispose();
+	}
 }
