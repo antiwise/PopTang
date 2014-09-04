@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.pomo.game.poptang.stages.IArrive;
 
 /**
  * 玩家
@@ -22,11 +23,18 @@ public class Player extends Biont{
 	TextureRegion currentFrame;
 	float time;
 	
-	public Player(float x, float y){
-		setX(x);
-		setY(y);
+	IArrive iArrive;
+	
+	public Player(IArrive iArrive){
+		this.iArrive = iArrive;
 	}
 	
+	/**
+	 * 初始化玩家
+	 * @param path
+	 * @param numWidth
+	 * @param numHeight
+	 */
 	public void init(String path,int numWidth,int numHeight){
 		
 
@@ -53,12 +61,19 @@ public class Player extends Biont{
 		time += Gdx.graphics.getDeltaTime();
 
 		if(this.isBehave()){//是否采取行动
-			move();
+			move(TYPE_DIRECTION.UP.ordinal());
+			move(TYPE_DIRECTION.DOWN.ordinal());
+			move(TYPE_DIRECTION.LEFT.ordinal());
+			move(TYPE_DIRECTION.RIGHT.ordinal());
 		}
 
 		batch.draw(currentFrame, getX(), getY());
 	}
 	
+	/**
+	 * 移动
+	 * @param index	方向下标
+	 */
 	private void move(int index){
 		
 		if(this.direction[index]==0){
@@ -68,25 +83,33 @@ public class Player extends Biont{
 			this.currentFrame = this.hero[index][0];
 		}else{
 			this.currentFrame = behave[index].getKeyFrame(time, true);
+			
+			//判断正向移动还是逆向移动
 			int sign = (index==1 || index==2)?-1:1;
+			
+			float x=getX(),y=getY();
+			
+			//判断横纵向
 			if(index>1){
-				setX(getX()+this.speed*sign);
+				x = getX()+this.speed*sign;
 			}else{
-				setY(getY()+this.speed*sign);
+				y = getY()+this.speed*sign;
 			}
+			
+			//判断该方格是否能够到达
+			if(iArrive.isArrive(x, y)){
+				setX(x);
+				setY(y);
+			}
+			
 		}
 		
 	}
 	
-	private void move(){
-
-		move(TYPE_DIRECTION.UP.ordinal());
-		move(TYPE_DIRECTION.DOWN.ordinal());
-		move(TYPE_DIRECTION.LEFT.ordinal());
-		move(TYPE_DIRECTION.RIGHT.ordinal());
-		
-	}
-	
+	/**
+	 * 行动
+	 * @param keycode 行动指令
+	 */
 	public void action(int keycode) {
 
 		switch (Math.abs(keycode)) {
