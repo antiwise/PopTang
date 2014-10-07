@@ -16,5 +16,5 @@ repositories {
 
 
 dependencies {
-	compile 'org.pomo:Fast-Libgdx:0.0.2'
+	compile 'org.pomo:Fast-Libgdx:0.0.3'
 }

@@ -8,25 +8,34 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.pomo.game.poptang.stages.IArrive;
+import com.badlogic.gdx.maps.objects.EllipseMapObject;
+import com.badlogic.gdx.math.Vector3;
+import com.pomo.game.poptang.stages.GameStage;
 
 /**
  * 玩家
  * @author Mr.Po
  *
  */
-public class Player extends Biont{
+public class Player extends Living{
 	
+	//角色四个方向的动画效果
 	Animation[] behave;
+	
+	//角色静态效果
 	TextureRegion[][] hero;
 	
+	//角色当前展示效果
 	TextureRegion currentFrame;
+	
+	//运动时间
 	float time;
 	
-	IArrive iArrive;
+	//游戏舞台
+	GameStage stage;
 	
-	public Player(IArrive iArrive){
-		this.iArrive = iArrive;
+	public Player(GameStage stage){
+		this.stage = stage;
 	}
 	
 	/**
@@ -35,23 +44,38 @@ public class Player extends Biont{
 	 * @param numWidth
 	 * @param numHeight
 	 */
-	public void init(String path,int numWidth,int numHeight){
+	public void init(String path,int numWidth,int numHeight,String name){
 		
-
 		Texture texture = new Texture(path);
 
-		this.hero = TextureRegion.split(texture,
-				texture.getWidth() / numWidth, texture.getHeight() / numHeight);
+		setWidth(texture.getWidth() / numWidth);
+		setHeight(texture.getHeight() / numHeight);
+		
+		this.hero = TextureRegion.split(texture,(int)this.getWidth()
+				,(int)this.getHeight());
 
 		behave = new Animation[4];
-		behave[0]= new Animation(0.1f, this.hero[3]);
-		behave[1]= new Animation(0.1f, this.hero[0]);
-		behave[2]= new Animation(0.1f, this.hero[1]);
-		behave[3]= new Animation(0.1f, this.hero[2]);
+		behave[0]= new Animation(0.1f, this.hero[0]);
+		behave[1]= new Animation(0.1f, this.hero[1]);
+		behave[2]= new Animation(0.1f, this.hero[2]);
+		behave[3]= new Animation(0.1f, this.hero[3]);
 		
 
 		this.currentFrame = this.hero[0][0];
 		this.direction[1] = -1;
+		
+		
+		
+		EllipseMapObject mapObject = (EllipseMapObject)this.stage.getMap().getLayers().get("player").getObjects().get(name);
+		
+		
+		
+		//设置玩家的初始化位置
+		this.setX(mapObject.getEllipse().x);
+		this.setY(mapObject.getEllipse().y);
+		
+		this.setX(96);
+		this.setY(96);
 	}
 	
 	
@@ -60,46 +84,54 @@ public class Player extends Biont{
 
 		time += Gdx.graphics.getDeltaTime();
 
-		if(this.isBehave()){//是否采取行动
-			move(TYPE_DIRECTION.UP.ordinal());
-			move(TYPE_DIRECTION.DOWN.ordinal());
-			move(TYPE_DIRECTION.LEFT.ordinal());
-			move(TYPE_DIRECTION.RIGHT.ordinal());
-		}
+		//尝试向四个方向移动
+		move(TYPE_DIRECTION.UP);
+		move(TYPE_DIRECTION.DOWN);
+		move(TYPE_DIRECTION.LEFT);
+		move(TYPE_DIRECTION.RIGHT);
 
+		//移动(可能移动位移为0)
+		if(this.directionMove.move()){
+			camerafollow();
+		}
+		
 		batch.draw(currentFrame, getX(), getY());
 	}
 	
 	/**
 	 * 移动
-	 * @param index	方向下标
+	 * @param direction	方向枚举
 	 */
-	private void move(int index){
+	private void move(TYPE_DIRECTION direction){
 		
-		if(this.direction[index]==0){
+		//方向下标
+		int index = direction.ordinal();
+		
+		if(this.direction[index]==0){//保持静止
 			
-		}else if(this.direction[index]==-1){
+		}else if(this.direction[index]==-1){//即将停止运动
 			this.direction[index] = 0;
 			this.currentFrame = this.hero[index][0];
 		}else{
+			
+			//得到当前运动帧
 			this.currentFrame = behave[index].getKeyFrame(time, true);
 			
 			//判断正向移动还是逆向移动
-			int sign = (index==1 || index==2)?-1:1;
+			int sign = (direction==TYPE_DIRECTION.UP || direction==TYPE_DIRECTION.RIGHT)?1:-1;
 			
-			float x=getX(),y=getY();
+			float x=0,y=0;
 			
 			//判断横纵向
-			if(index>1){
-				x = getX()+this.speed*sign;
+			if(direction == TYPE_DIRECTION.UP || direction == TYPE_DIRECTION.DOWN){
+				y = this.speed*sign;
 			}else{
-				y = getY()+this.speed*sign;
+				x = this.speed*sign;
 			}
 			
 			//判断该方格是否能够到达
-			if(iArrive.isArrive(x, y)){
-				setX(x);
-				setY(y);
+			if(this.stage.isArrive(this.getX()+x, this.getY()+y)){
+				this.directionMove.offset(x, y);
 			}
 			
 		}
@@ -107,25 +139,58 @@ public class Player extends Biont{
 	}
 	
 	/**
-	 * 行动
+	 * 接收行动指令
 	 * @param keycode 行动指令
 	 */
 	public void action(int keycode) {
 
 		switch (Math.abs(keycode)) {
 
-			case Input.Keys.UP:
-				this.direction[0] = Input.Keys.UP/keycode;
+			case Input.Keys.W:
+				this.direction[0] = Input.Keys.W/keycode;
 				break;
-			case Input.Keys.DOWN:
-				this.direction[1] = Input.Keys.DOWN/keycode;
+			case Input.Keys.S:
+				this.direction[1] = Input.Keys.S/keycode;
 				break;
-			case Input.Keys.LEFT:
-				this.direction[2] = Input.Keys.LEFT/keycode;
+			case Input.Keys.A:
+				this.direction[2] = Input.Keys.A/keycode;
 				break;
-			case Input.Keys.RIGHT:
-				this.direction[3] = Input.Keys.RIGHT/keycode;
+			case Input.Keys.D:
+				this.direction[3] = Input.Keys.D/keycode;
 				break;
+		}
+		
+		//System.out.println("direction:{"+direction[0]+","+direction[1]+","+direction[2]+","+direction[3]+"}");
+		
+	}
+	
+	/**
+	 * 镜头跟随
+	 */
+	private void camerafollow(){
+		
+		
+		//原始镜头中心点
+		Vector3 oldPosition = this.stage.getCamera().position.cpy();
+		
+		//玩家中心点距离原镜头中心点的偏差量
+		Vector3 offsetPosition = new Vector3(getX() - oldPosition.x,getY() - oldPosition.y, 0);
+		
+		
+		//判断相机x边界
+		if (oldPosition.x + offsetPosition.x > this.stage.getWidth() / 2
+				&& oldPosition.x + offsetPosition.x + this.stage.getWidth() / 2 < this.stage.getMapWidth()) {
+			
+			this.stage.getCamera().position.x += offsetPosition.x;
+			
+		}
+		
+		//判断相机y边界
+		if (oldPosition.y + offsetPosition.y > this.stage.getHeight() / 2
+				&& oldPosition.y + offsetPosition.y + this.stage.getHeight() / 2 < this.stage.getMapHeight()) {
+			
+			this.stage.getCamera().position.y += offsetPosition.y;
+			
 		}
 		
 	}

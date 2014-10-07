@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="25" height="20" tilewidth="48" tileheight="48">
+ <tileset firstgid="1" name="Floor1" tilewidth="48" tileheight="48">
+  <image source="resources/Floor1.png" width="336" height="48"/>
+ </tileset>
+ <tileset firstgid="8" name="StoneWall" tilewidth="48" tileheight="48">
+  <image source="resources/StoneWall.png" width="240" height="48"/>
+ </tileset>
+ <tileset firstgid="13" name="TownBlockRed" tilewidth="48" tileheight="48">
+  <image source="resources/TownBlockRed.png" width="48" height="48"/>
+ </tileset>
+ <tileset firstgid="14" name="TownBlockYellow" tilewidth="48" tileheight="48">
+  <image source="resources/TownBlockYellow.png" width="48" height="48"/>
+ </tileset>
+ <layer name="ground" width="25" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYBzFo3gUj+JRPIpH8ZDGAK1BAfU=
+  </data>
+ </layer>
+ <layer name="barrier-un-destroible" width="25" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYGBg4GCAABjNzUA54IKaRw2ziAW08Ac+QCvzudHoUTAKRsEoGAW0A6D6aqiWt7C6FgQAUE0AnA==
+  </data>
+ </layer>
+ <layer name="barrier-destroible" width="25" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYIAAXijNx0A7wAe1B0bTAtDSH8hu50USo7Yd6DStwmoUjIJRMApGAf0AD43NBgAftgD7
+  </data>
+ </layer>
+ <objectgroup name="player" width="25" height="20">
+  <object name="P1" x="9" y="12" width="29" height="23">
+   <ellipse/>
+  </object>
+ </objectgroup>
+</map>
