@@ -1,7 +1,6 @@
 package com.pomo.game.poptang.stages;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.pomo.game.poptang.PopTangGame;
 
@@ -20,7 +19,7 @@ public class DanRenGameStage extends GameStage{
 
 	@Override
 	protected String readMapPath() {
-		return "map/XQ-1.tmx";
+		return "map/xq-1.tmx";
 	}
 	
 	public void draw() {

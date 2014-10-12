@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="25" height="20" tilewidth="40" tileheight="40">
+ <tileset firstgid="1" name="Floor1" tilewidth="40" tileheight="40">
+  <image source="resources/Floor1.png" width="280" height="40"/>
+ </tileset>
+ <tileset firstgid="8" name="StoneWall" tilewidth="40" tileheight="40">
+  <image source="resources/StoneWall.png" width="200" height="80"/>
+ </tileset>
+ <tileset firstgid="18" name="TownBlockRed" tilewidth="40" tileheight="40">
+  <image source="resources/TownBlockRed.png" width="40" height="80"/>
+ </tileset>
+ <layer name="down-decoration" width="25" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYBzFo3gUj+JRPIpH8ZDGAK1BAfU=
+  </data>
+ </layer>
+ <layer name="obstacle" width="25" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYKA94B3i5o+CoQkESMCDAQjjEBckAZNrBzXBcLIDHY+CUUAuoEc9CAA2uwJL
+  </data>
+ </layer>
+ <objectgroup name="player" width="25" height="20">
+  <object name="P1" x="285" y="287" width="28" height="26">
+   <ellipse/>
+  </object>
+ </objectgroup>
+ <layer name="top-decoration" width="25" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzjYKAt4KCx+aNgaAJuEvBgAEI4xHlIwOTaQU0wnOxAx6NgFJALaF1P0aseBACRfQHA
+  </data>
+ </layer>
+</map>

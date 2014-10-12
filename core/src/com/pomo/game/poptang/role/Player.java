@@ -35,6 +35,7 @@ public class Player extends Living{
 	GameStage stage;
 	
 	public Player(GameStage stage){
+		super(stage);
 		this.stage = stage;
 	}
 	
@@ -46,14 +47,18 @@ public class Player extends Living{
 	 */
 	public void init(String path,int numWidth,int numHeight,String name){
 		
+		//获取角色的二维图片
 		Texture texture = new Texture(path);
 
+		//设置角色的size
 		setWidth(texture.getWidth() / numWidth);
 		setHeight(texture.getHeight() / numHeight);
 		
+		//拆分二维图片
 		this.hero = TextureRegion.split(texture,(int)this.getWidth()
 				,(int)this.getHeight());
 
+		//设置动画
 		behave = new Animation[4];
 		behave[0]= new Animation(0.1f, this.hero[0]);
 		behave[1]= new Animation(0.1f, this.hero[1]);
@@ -65,9 +70,8 @@ public class Player extends Living{
 		this.direction[1] = -1;
 		
 		
-		
+		//得到玩家地图层
 		EllipseMapObject mapObject = (EllipseMapObject)this.stage.getMap().getLayers().get("player").getObjects().get(name);
-		
 		
 		
 		//设置玩家的初始化位置
@@ -82,20 +86,18 @@ public class Player extends Living{
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 
-		time += Gdx.graphics.getDeltaTime();
-
 		//尝试向四个方向移动
 		move(TYPE_DIRECTION.UP);
 		move(TYPE_DIRECTION.DOWN);
 		move(TYPE_DIRECTION.LEFT);
 		move(TYPE_DIRECTION.RIGHT);
 
-		//移动(可能移动位移为0)
-		if(this.directionMove.move()){
-			camerafollow();
+		//判断该方格是否能够到达 && 移动(可能移动位移为0)
+		if(this.dme.move()){
+			camerafollow();//当产生真实物理位移后，矫正镜头
 		}
 		
-		batch.draw(currentFrame, getX(), getY());
+		batch.draw(this.currentFrame, this.getX(), this.getY());
 	}
 	
 	/**
@@ -114,25 +116,25 @@ public class Player extends Living{
 			this.currentFrame = this.hero[index][0];
 		}else{
 			
+			//递增时间
+			this.time += Gdx.graphics.getDeltaTime();
+			
 			//得到当前运动帧
 			this.currentFrame = behave[index].getKeyFrame(time, true);
 			
 			//判断正向移动还是逆向移动
 			int sign = (direction==TYPE_DIRECTION.UP || direction==TYPE_DIRECTION.RIGHT)?1:-1;
 			
-			float x=0,y=0;
+			float offsetX=0,offsetY=0;
 			
 			//判断横纵向
 			if(direction == TYPE_DIRECTION.UP || direction == TYPE_DIRECTION.DOWN){
-				y = this.speed*sign;
+				offsetY = this.speed*sign;
 			}else{
-				x = this.speed*sign;
+				offsetX = this.speed*sign;
 			}
 			
-			//判断该方格是否能够到达
-			if(this.stage.isArrive(this.getX()+x, this.getY()+y)){
-				this.directionMove.offset(x, y);
-			}
+			this.dme.offset(offsetX, offsetY);
 			
 		}
 		
